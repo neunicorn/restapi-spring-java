@@ -24,17 +24,12 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private Validator validator;
+    private ValidationService validationService;
 
     @Transactional
     public void register(RegisterUserRequest request) {
 
-        Set<ConstraintViolation<RegisterUserRequest>> validate = validator.validate(request);
-
-        // size of valdate not zero, so the request was errror;
-        if (validate.size() != 0) {
-            throw new ConstraintViolationException(validate);
-        }
+        validationService.validate(request);
 
         if (userRepository.existsById(request.getUsername())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Already Created");
