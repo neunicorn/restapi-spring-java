@@ -50,4 +50,12 @@ public class AuthService {
         }
 
     }
+
+    @Transactional
+    public void logout(User user) {
+        user.setToken(null);
+        user.setTokenExpiredAt(null);
+
+        userRepository.save(user);
+    }
 }

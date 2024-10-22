@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nasya.restapi.entity.User;
 import com.nasya.restapi.model.RegisterUserRequest;
 import com.nasya.restapi.model.TokenResponse;
+import com.nasya.restapi.model.UpdateUserRequest;
 import com.nasya.restapi.model.UserResponse;
 import com.nasya.restapi.model.WebResponse;
 import com.nasya.restapi.repository.UserRepository;
@@ -42,9 +43,15 @@ public class UserControllerTest {
         @Test
         @BeforeEach
         void setUp() {
+
+                // Setup Repository
                 userRepository.deleteAll();
         }
 
+        /***
+         * 
+         * Test Register Endpoint
+         */
         @Test
         void testRegisterSuccess() throws Exception {
                 RegisterUserRequest req = new RegisterUserRequest();
@@ -124,6 +131,10 @@ public class UserControllerTest {
                                 });
         }
 
+        /***
+         * 
+         * Test get User
+         */
         @Test
         void getUserUnAuthorized() throws Exception {
                 mockMvc.perform(
@@ -212,6 +223,65 @@ public class UserControllerTest {
                                                         });
 
                                         assertNotNull(response.getErrors());
+                                });
+        }
+
+        /***
+         * Test Update User
+         */
+        @Test
+        void updateUserFailedUnAuthorized() throws Exception {
+                UpdateUserRequest req = new UpdateUserRequest();
+                mockMvc.perform(
+                                patch("/api/users/current")
+                                                .accept(MediaType.APPLICATION_JSON)
+                                                .header("X-API-TOKEN", "notfound")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(req)))
+                                .andExpectAll(status().isUnauthorized())
+                                .andDo(result -> {
+
+                                        WebResponse<String> response = objectMapper.readValue(
+                                                        result.getResponse().getContentAsString(),
+                                                        new TypeReference<WebResponse<String>>() {
+                                                        });
+
+                                        assertNotNull(response.getErrors());
+                                });
+
+        }
+
+        @Test
+        void updateUserSuccess() throws Exception {
+                User user = new User();
+                user.setName("hasya");
+                user.setUsername("hasysya");
+                user.setPassword(BCrypt.hashpw("Testing", BCrypt.gensalt()));
+                user.setToken("test");
+                user.setTokenExpiredAt(System.currentTimeMillis() + 1000000000L);
+
+                userRepository.save(user);
+
+                UpdateUserRequest req = new UpdateUserRequest();
+                req.setName("Zulfan");
+
+                mockMvc.perform(
+                                patch("/api/users/current")
+                                                .accept(MediaType.APPLICATION_JSON)
+                                                .header("X-API-TOKEN", "test")
+                                                .contentType(MediaType.APPLICATION_JSON)
+                                                .content(objectMapper.writeValueAsString(req)))
+                                .andExpectAll(status().isOk())
+                                .andDo(result -> {
+
+                                        WebResponse<UserResponse> response = objectMapper.readValue(
+                                                        result.getResponse().getContentAsString(),
+                                                        new TypeReference<WebResponse<UserResponse>>() {
+                                                        });
+
+                                        assertNull(response.getErrors());
+                                        assertEquals("Zulfan", response.getData().getName());
+                                        assertEquals("hasysya", response.getData().getUsername());
                                 });
         }
 }

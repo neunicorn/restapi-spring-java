@@ -69,4 +69,5 @@ public class UserService {
 
         return UserResponse.builder().name(user.getName()).username(user.getUsername()).build();
     }
+
 }
