@@ -2,11 +2,14 @@ package com.nasya.restapi.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.nasya.restapi.entity.User;
 import com.nasya.restapi.model.RegisterUserRequest;
+import com.nasya.restapi.model.UserResponse;
 import com.nasya.restapi.model.WebResponse;
 import com.nasya.restapi.service.UserService;
 
@@ -21,6 +24,12 @@ public class UserController {
         userService.register(request);
 
         return WebResponse.<String>builder().data("OK").build();
+    }
+
+    @GetMapping(path = "/api/users/current", produces = MediaType.APPLICATION_JSON_VALUE)
+    public WebResponse<UserResponse> get(User user) {
+        UserResponse userResponse = userService.get(user);
+        return WebResponse.<UserResponse>builder().data(userResponse).build();
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.nasya.restapi.entity.User;
 import com.nasya.restapi.model.RegisterUserRequest;
+import com.nasya.restapi.model.UserResponse;
 import com.nasya.restapi.repository.UserRepository;
 import com.nasya.restapi.security.BCrypt;
 
@@ -42,5 +43,10 @@ public class UserService {
 
         userRepository.save(user);
 
+    }
+
+    public UserResponse get(User user) {
+
+        return UserResponse.builder().username(user.getUsername()).name(user.getName()).build();
     }
 }
