@@ -1,12 +1,11 @@
 package com.nasya.restapi.service;
 
 import java.util.Objects;
-import java.util.Set;
 
-import org.aspectj.weaver.bcel.BcelGenericSignatureToTypeXConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.nasya.restapi.entity.User;
@@ -15,11 +14,6 @@ import com.nasya.restapi.model.UpdateUserRequest;
 import com.nasya.restapi.model.UserResponse;
 import com.nasya.restapi.repository.UserRepository;
 import com.nasya.restapi.security.BCrypt;
-
-import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 
 @Service
 public class UserService {

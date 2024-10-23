@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.nasya.restapi.entity.User;
@@ -12,8 +13,6 @@ import com.nasya.restapi.model.LoginUserRequest;
 import com.nasya.restapi.model.TokenResponse;
 import com.nasya.restapi.repository.UserRepository;
 import com.nasya.restapi.security.BCrypt;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class AuthService {
