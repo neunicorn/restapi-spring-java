@@ -12,7 +12,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nasya.restapi.entity.User;
 import com.nasya.restapi.model.RegisterUserRequest;
-import com.nasya.restapi.model.TokenResponse;
 import com.nasya.restapi.model.UpdateUserRequest;
 import com.nasya.restapi.model.UserResponse;
 import com.nasya.restapi.model.WebResponse;
@@ -20,12 +19,8 @@ import com.nasya.restapi.repository.UserRepository;
 import com.nasya.restapi.security.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.MockMvcBuilder.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import org.hibernate.jdbc.Expectations;
 
 @SpringBootTest
 @AutoConfigureMockMvc

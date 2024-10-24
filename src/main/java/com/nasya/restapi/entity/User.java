@@ -1,6 +1,5 @@
 package com.nasya.restapi.entity;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import jakarta.persistence.Column;
