@@ -1,5 +1,6 @@
 package com.nasya.restapi.service;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import com.nasya.restapi.entity.Contact;
 import com.nasya.restapi.entity.User;
 import com.nasya.restapi.model.AddressResponse;
 import com.nasya.restapi.model.CreateAddressRequest;
+import com.nasya.restapi.model.UpdateAddressRequest;
 import com.nasya.restapi.repository.AddressRepository;
 import com.nasya.restapi.repository.ContactRepository;
 
@@ -60,5 +62,60 @@ public class AddressService {
         addressRepository.save(address);
 
         return toAddressResponse(address);
+    }
+
+    @Transactional(readOnly = true)
+    public AddressResponse get(User user, String contactId, String addressId) {
+
+        Contact contact = contactRepository.findFirstByUserAndId(user, contactId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CONTACT NOT FOUND"));
+
+        Address address = addressRepository.findFirstByContactAndId(contact, addressId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ADDRESS NOT FOUND"));
+        return toAddressResponse(address);
+    }
+
+    @Transactional
+    public AddressResponse update(User user, UpdateAddressRequest req) {
+
+        validationService.validate(req);
+
+        Contact contact = contactRepository.findFirstByUserAndId(user, req.getContactId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CONTACT NOT FOUND"));
+
+        Address address = addressRepository.findFirstByContactAndId(contact, req.getAddressId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ADDRESS NOT FOUND"));
+
+        address.setStreet(req.getStreet());
+        address.setPostalCode(req.getPostalCode());
+        address.setCity(req.getCity());
+        address.setProvince(req.getProvince());
+        address.setCountry(req.getCountry());
+
+        addressRepository.save(address);
+
+        return toAddressResponse(address);
+    }
+
+    @Transactional
+    public void delete(User user, String contactId, String addressId) {
+
+        Contact contact = contactRepository.findFirstByUserAndId(user, contactId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CONTACT_NOT_FOUND"));
+
+        Address address = addressRepository.findFirstByContactAndId(contact, addressId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "ADDRESS_NOT_FOUND"));
+
+        addressRepository.delete(address);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AddressResponse> list(User user, String contactId) {
+        Contact contact = contactRepository.findFirstByUserAndId(user, contactId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "CONTACT_NOT_FOUND"));
+
+        List<Address> addresses = addressRepository.findAllByContact(contact);
+
+        return addresses.stream().map(address -> toAddressResponse(address)).toList();
     }
 }
